@@ -13,7 +13,7 @@
 #define IDI_SMALL                       108
 #define IDC_DRAWWINDOW                  109
 #define IDR_MAINFRAME                   128
-#define IDC_CURSOR1                     129
+
 #define IDC_SHARK                       129
 #define IDI_SHARK                       134
 #define IDC_STATIC                      -1

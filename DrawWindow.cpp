@@ -11,6 +11,10 @@ HINSTANCE hInst;                                // 当前实例
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 
+int xStart = 100;
+int yStart = 100;
+int step = 5;
+
 // 此代码模块中包含的函数的前向声明:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -74,11 +78,11 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_STARFISH));
-    wcex.hCursor        = LoadCursor(hInstance, MAKEINTRESOURCE(IDI_SHARK));
+    wcex.hCursor        = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_SHARK));
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_DRAWWINDOW);
     wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_STARFISH));
 
     return RegisterClassExW(&wcex);
 }
@@ -123,6 +127,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
     switch (message)
     {
     case WM_COMMAND:
@@ -142,6 +147,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
+    case WM_LBUTTONDOWN:
+        xStart = LOWORD(lParam);
+        yStart = HIWORD(lParam);
+        hdc = GetDC(hWnd);
+        DrawIcon(hdc, LOWORD(lParam), HIWORD(lParam), LoadIcon(hInst, MAKEINTRESOURCE(IDI_SHARK)));
+        ReleaseDC(hWnd, hdc);
+        break;
+    case WM_MOUSEMOVE:
+        if (wParam == MK_LBUTTON)
+        {
+            hdc = GetDC(hWnd);
+
+            DrawIcon(hdc, LOWORD(lParam), HIWORD(lParam), LoadIcon(hInst, MAKEINTRESOURCE(IDI_SHARK)));
+            ReleaseDC(hWnd, hdc);
+        }
+        break;
+    case WM_KEYDOWN:
+        if (wParam == VK_LEFT)
+        {
+            xStart -= step;
+        }
+        if (wParam == VK_RIGHT)
+        {
+            xStart += step;
+        }
+        if (wParam == VK_UP)
+        {
+            yStart -= step;
+        }
+        if (wParam == VK_DOWN)
+        {
+            yStart += step;
+        }
+        hdc = GetDC(hWnd);
+        DrawIcon(hdc, xStart, yStart, LoadIcon(hInst, MAKEINTRESOURCE(IDI_SHARK)));
+        ReleaseDC(hWnd, hdc);
+        break;
+
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
